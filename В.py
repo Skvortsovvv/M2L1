@@ -1,6 +1,6 @@
 import re
 import queue
-
+import sys
 
 class Node:
 
@@ -66,37 +66,61 @@ class SplayTree:
         return x.key
 
     def print(self):
-        queue_to_print = queue.Queue()
-        if self.root is not None:
+        # используем обход в ширину
+        queue_to_visit = queue.Queue()
+        queue_to_visit.put(self.root)
+        visited = set()
+        visited.add(self.root)
+        if self.root is None:
+            print('_ _')
+            return
+        else:
             print('[' + str(self.root.key) + ' ' + self.root.value + ']')
-        queue_to_print.put(self.root.left)
-        queue_to_print.put(self.root.right)
-        while not queue_to_print.empty():
-            size_before = queue_to_print.qsize()
-            result = ''
-            counter1 = 0
-            counter2 = 0
-            for i in range(0, size_before):
-                peak = queue_to_print.get()
-                if peak is not None:
-                    result += '[' + str(peak.key) + ' ' + peak.value + ' ' + str(peak.parent.key) + ']'
-                    if i != size_before-1:
-                        result += ' '
-                    left = peak.left
-                    right = peak.right
-                    queue_to_print.put(left)
-                    queue_to_print.put(right)
-                    if left != right:
-                        counter1 += 1
-                    counter2 += 1
+        if self.root.left is not self.root.right:
+            queue_to_visit.put(self.root.left)
+            queue_to_visit.put(self.root.right)
+            level = 1
+            while not queue_to_visit.empty():
+                peak = queue_to_visit.get()
+                if peak is None:
+                    sys.stdout.write('_ _ _')
                 else:
-                    result += '_ _ _'
-                    if i != size_before - 1:
-                        result += ' '
-            if counter2 > 0:
-                print(result)
-            if counter1 == 0:
-                break
+                    sys.stdout.write('[' + str(peak.key) + ' '
+                                     + peak.value + ' ' + peak.parent + ']')
+
+
+
+        # queue_to_print = queue.Queue()
+        # if self.root is not None:
+        #     print('[' + str(self.root.key) + ' ' + self.root.value + ']')
+        #     queue_to_print.put(self.root.left)
+        #     queue_to_print.put(self.root.right)
+        # while not queue_to_print.empty():
+        #     size_before = queue_to_print.qsize()
+        #     result = ''
+        #     counter1 = 0
+        #     counter2 = 0
+        #     for i in range(0, size_before):
+        #         peak = queue_to_print.get()
+        #         if peak is not None:
+        #             result += '[' + str(peak.key) + ' ' + peak.value + ' ' + str(peak.parent.key) + ']'
+        #             if i != size_before-1:
+        #                 result += ' '
+        #             left = peak.left
+        #             right = peak.right
+        #             queue_to_print.put(left)
+        #             queue_to_print.put(right)
+        #             if left != right:
+        #                 counter1 += 1
+        #             counter2 += 1
+        #         else:
+        #             result += '_ _ _'
+        #             if i != size_before - 1:
+        #                 result += ' '
+        #     if counter2 > 0:
+        #         print(result)
+        #     if counter1 == 0:
+        #         break
 
 
     def rotate(self, parent, child):
