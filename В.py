@@ -2,6 +2,7 @@ import re
 import queue
 import sys
 
+
 class Node:
 
     def __init__(self, key=None, value=None, left=None, right=None, parent=None):
@@ -68,9 +69,6 @@ class SplayTree:
     def print(self):
         # используем обход в ширину
         queue_to_visit = queue.Queue()
-        queue_to_visit.put(self.root)
-        visited = set()
-        visited.add(self.root)
         if self.root is None:
             print('_ _')
             return
@@ -79,14 +77,32 @@ class SplayTree:
         if self.root.left is not self.root.right:
             queue_to_visit.put(self.root.left)
             queue_to_visit.put(self.root.right)
-            level = 1
+            items_on_level = 2
+            i = 0
+            indexes = queue.Queue()
+            index = -1
             while not queue_to_visit.empty():
+                if i == index+2 or i == index+1:
+                    sys.stdout.write('_ _ _ _ _ _')
                 peak = queue_to_visit.get()
                 if peak is None:
+                    indexes.put(i)
                     sys.stdout.write('_ _ _')
                 else:
-                    sys.stdout.write('[' + str(peak.key) + ' '
-                                     + peak.value + ' ' + peak.parent + ']')
+                    sys.stdout.write('[' + str(peak.key) + ' ' + peak.value + ' ' + str(peak.parent.key) + ']')
+                    if peak.left is not peak.right:
+                        queue_to_visit.put(peak.left)
+                        queue_to_visit.put(peak.right)
+                i += 1
+                if i == items_on_level:
+                    items_on_level *= 2
+                    i = 0
+                    sys.stdout.write('\n')
+                    if not indexes.empty():
+                        index = indexes.get()
+                else:
+                    sys.stdout.write(' ')
+
 
 
 
@@ -185,6 +201,11 @@ class SplayTree:
         self.set_parent(root.right, None)
         return self.merge(root.left, root.right)
 
+    def height(self, root: Node):
+        if root is None:
+            return 0
+        else:
+            return 1+max(self.height(root.left), self.height(root.right))
 
 
 def process(text, tree: SplayTree):
@@ -245,7 +266,8 @@ def process(text, tree: SplayTree):
             return
 
         if re.fullmatch(r'print', text) is not None:
-            tree.print()
+            print(tree.height(tree.root))
+            #tree.print()
             return
 
     print("error")
