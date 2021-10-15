@@ -194,7 +194,7 @@ def process(text, tree: SplayTree):
             key = int(text[7:])
             if key in tree.Peaks:
                 tree.root = tree.find(tree.root, key)
-                tree.remove(tree.root, key)
+                tree.root = tree.remove(tree.root, key)
             else:
                 tree.root = tree.find(tree.root, key)
             return
