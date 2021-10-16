@@ -80,10 +80,19 @@ class SplayTree:
             items_on_level = 2
             i = 0
             indexes = queue.Queue()
-            index = -1
+            index = -3
+            flag = False
             while not queue_to_visit.empty():
-                if i == index+2 or i == index+1:
+
+                if i == index+index:  # or i == index+index+1
+                    flag = True
                     sys.stdout.write('_ _ _ _ _ _')
+                    indexes.put(i)
+                    indexes.put(i+1)
+                    index = indexes.get()
+                    i += 2
+                    if i is not items_on_level:
+                        sys.stdout.write(' ')
                 peak = queue_to_visit.get()
                 if peak is None:
                     indexes.put(i)
@@ -98,7 +107,7 @@ class SplayTree:
                     items_on_level *= 2
                     i = 0
                     sys.stdout.write('\n')
-                    if not indexes.empty():
+                    if not indexes.empty() and not flag:
                         index = indexes.get()
                 else:
                     sys.stdout.write(' ')
@@ -266,8 +275,8 @@ def process(text, tree: SplayTree):
             return
 
         if re.fullmatch(r'print', text) is not None:
-            print(tree.height(tree.root))
-            #tree.print()
+            #print(tree.height(tree.root))
+            tree.print()
             return
 
     print("error")
@@ -277,7 +286,6 @@ def process(text, tree: SplayTree):
 def main():
 
     tree = SplayTree()
-    tree.add_peak(Node(4, 'qwe'))
     while True:
         try:
             text = input()
