@@ -86,7 +86,7 @@ class SplayTree:
 
                 if i == index+index:  # or i == index+index+1
                     flag = True
-                    sys.stdout.write('_ _ _ _ _ _')
+                    sys.stdout.write('_ _')
                     indexes.put(i)
                     indexes.put(i+1)
                     index = indexes.get()
@@ -96,7 +96,7 @@ class SplayTree:
                 peak = queue_to_visit.get()
                 if peak is None:
                     indexes.put(i)
-                    sys.stdout.write('_ _ _')
+                    sys.stdout.write('_')
                 else:
                     sys.stdout.write('[' + str(peak.key) + ' ' + peak.value + ' ' + str(peak.parent.key) + ']')
                     if peak.left is not peak.right:
@@ -111,42 +111,6 @@ class SplayTree:
                         index = indexes.get()
                 else:
                     sys.stdout.write(' ')
-
-
-
-
-        # queue_to_print = queue.Queue()
-        # if self.root is not None:
-        #     print('[' + str(self.root.key) + ' ' + self.root.value + ']')
-        #     queue_to_print.put(self.root.left)
-        #     queue_to_print.put(self.root.right)
-        # while not queue_to_print.empty():
-        #     size_before = queue_to_print.qsize()
-        #     result = ''
-        #     counter1 = 0
-        #     counter2 = 0
-        #     for i in range(0, size_before):
-        #         peak = queue_to_print.get()
-        #         if peak is not None:
-        #             result += '[' + str(peak.key) + ' ' + peak.value + ' ' + str(peak.parent.key) + ']'
-        #             if i != size_before-1:
-        #                 result += ' '
-        #             left = peak.left
-        #             right = peak.right
-        #             queue_to_print.put(left)
-        #             queue_to_print.put(right)
-        #             if left != right:
-        #                 counter1 += 1
-        #             counter2 += 1
-        #         else:
-        #             result += '_ _ _'
-        #             if i != size_before - 1:
-        #                 result += ' '
-        #     if counter2 > 0:
-        #         print(result)
-        #     if counter1 == 0:
-        #         break
-
 
     def rotate(self, parent, child):
         gparent = parent.parent
