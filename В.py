@@ -97,6 +97,8 @@ class SplayTree:
                         items_on_level *= 2
                         i = 0
                         sys.stdout.write('\n')
+                        if (indexes.qsize() * 2 + queue_to_visit.qsize() + 2) <= items_on_level:
+                            break
                     continue
 
                 peak = queue_to_visit.get()
@@ -116,6 +118,8 @@ class SplayTree:
                     sys.stdout.write('\n')
                     if not indexes.empty() and not flag:
                         index = indexes.get()
+                    if (indexes.qsize()*2 + queue_to_visit.qsize()+2) < items_on_level:
+                        break
                 else:
                     sys.stdout.write(' ')
 
