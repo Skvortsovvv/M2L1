@@ -93,16 +93,23 @@ class SplayTree:
                     i += 2
                     if i is not items_on_level:
                         sys.stdout.write(' ')
+                    else:
+                        items_on_level *= 2
+                        i = 0
+                        sys.stdout.write('\n')
+                    continue
+
                 peak = queue_to_visit.get()
                 if peak is None:
                     indexes.put(i)
                     sys.stdout.write('_')
+
                 else:
                     sys.stdout.write('[' + str(peak.key) + ' ' + peak.value + ' ' + str(peak.parent.key) + ']')
-                    if peak.left is not peak.right:
-                        queue_to_visit.put(peak.left)
-                        queue_to_visit.put(peak.right)
+                    queue_to_visit.put(peak.left)
+                    queue_to_visit.put(peak.right)
                 i += 1
+
                 if i == items_on_level:
                     items_on_level *= 2
                     i = 0
@@ -250,16 +257,18 @@ def process(text, tree: SplayTree):
 def main():
 
     tree = SplayTree()
+    inputfile = open('MODUL2/tests2/input1.txt', 'r')
+
+
+    # for text in inputfile:
+    #     sys.stdout.write(text)
+    #     process(text, tree)
     while True:
         try:
             text = input()
             process(text, tree)
         except EOFError:
             break
-
-
-
-
     return
 
 
