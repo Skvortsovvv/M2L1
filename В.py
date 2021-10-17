@@ -67,15 +67,13 @@ class SplayTree:
             x = x.left
         return x.key
 
-    def print(self, fout):
+    def print(self):
 
         queue_to_visit = queue.Queue()  # items
         if self.root is None:
-            fout.write('_\n')
             print('_')
             return
         else:
-            fout.write('[' + str(self.root.key) + ' ' + self.root.value + ']\n')
             print('[' + str(self.root.key) + ' ' + self.root.value + ']')
         if self.root.left is not self.root.right:
             queue_to_visit.put(self.root.left)
@@ -95,25 +93,19 @@ class SplayTree:
 
             if index > i:
                 sys.stdout.write('_ ' * (index - i - 1))
-                fout.write('_ ' * (index - i - 1))
                 i = index
 
                 if (size_before == 0) and (index < items_on_level - 1) and (index is not -1):
                     sys.stdout.write(' ')
-                    fout.write(' ')
                     sys.stdout.write('_ ' * (items_on_level - index - 2))
-                    fout.write('_ ' * (items_on_level - index - 2))
                     sys.stdout.write('_')
-                    fout.write('_')
                     i = items_on_level
 
                 if i == items_on_level:
                     sys.stdout.write('_')
-                    fout.write('_')
                     items_on_level *= 2
                     i = 0
 
-                    fout.write('\n')
                     sys.stdout.write('\n')
                     high += 1
                     size_before = indexes_of_items.qsize()
@@ -121,15 +113,12 @@ class SplayTree:
                         break
                 else:
                     sys.stdout.write('_ ')
-                    fout.write('_ ')
 
             peak = queue_to_visit.get()
             if peak is None:
-                fout.write('_')
                 sys.stdout.write('_')
 
             else:
-                fout.write('[' + str(peak.key) + ' ' + peak.value + ' ' + str(peak.parent.key) + ']')
                 sys.stdout.write('[' + str(peak.key) + ' ' + peak.value + ' ' + str(peak.parent.key) + ']')
                 queue_to_visit.put(peak.left)
                 queue_to_visit.put(peak.right)
@@ -139,91 +128,21 @@ class SplayTree:
 
             if (size_before == 0) and (index < items_on_level - 1) and (index is not -1):
                 sys.stdout.write(' ')
-                fout.write(' ')
                 sys.stdout.write('_ ' * (items_on_level - index - 2))
-                fout.write('_ ' * (items_on_level - index - 2))
                 sys.stdout.write('_')
-                fout.write('_')
                 i = items_on_level
 
             if i == items_on_level:
                 items_on_level *= 2
                 i = 0
-                fout.write('\n')
                 sys.stdout.write('\n')
                 high += 1
                 if high == self.h:
                     break
                 size_before = indexes_of_items.qsize()
             else:
-                fout.write(' ')
                 sys.stdout.write(' ')
 
-        # queue_to_visit = queue.Queue()
-        # if self.root is None:
-        #     fout.write('_\n')
-        #     print('_')
-        #     return
-        # else:
-        #     fout.write('[' + str(self.root.key) + ' ' + self.root.value + ']\n')
-        #     print('[' + str(self.root.key) + ' ' + self.root.value + ']')
-        # if self.root.left is not self.root.right:
-        #     queue_to_visit.put(self.root.left)
-        #     queue_to_visit.put(self.root.right)
-        #     items_on_level = 2
-        #     i = 0
-        #     indexes = queue.Queue()
-        #     index = -3
-        #     flag = False
-        #     high = 1
-        #     while not queue_to_visit.empty():
-        #         if i == index+index:  # or i == index+index+1
-        #             flag = True
-        #             fout.write('_ _')
-        #             sys.stdout.write('_ _')
-        #             indexes.put(i)
-        #             indexes.put(i+1)
-        #             index = indexes.get()
-        #             i += 2
-        #             if i is not items_on_level:
-        #                 fout.write(' ')
-        #                 sys.stdout.write(' ')
-        #             else:
-        #                 items_on_level *= 2
-        #                 i = 0
-        #                 fout.write('\n')
-        #                 sys.stdout.write('\n')
-        #                 high += 1
-        #                 if high == self.h:
-        #                     break
-        #             continue
-        #
-                # peak = queue_to_visit.get()
-                # if peak is None:
-                #     indexes.put(i)
-                #     fout.write('_')
-                #     sys.stdout.write('_')
-                #
-                # else:
-                #     fout.write('[' + str(peak.key) + ' ' + peak.value + ' ' + str(peak.parent.key) + ']')
-                #     sys.stdout.write('[' + str(peak.key) + ' ' + peak.value + ' ' + str(peak.parent.key) + ']')
-                #     queue_to_visit.put(peak.left)
-                #     queue_to_visit.put(peak.right)
-                # i += 1
-                #
-                # if i == items_on_level:
-                #     items_on_level *= 2
-                #     i = 0
-                #     fout.write('\n')
-                #     sys.stdout.write('\n')
-                #     high += 1
-                #     if high == self.h:
-                #         break
-                #     if not indexes.empty() and not flag:
-                #         index = indexes.get()
-                # else:
-                #     fout.write(' ')
-                #     sys.stdout.write(' ')
 
     def rotate(self, parent, child):
         gparent = parent.parent
@@ -296,7 +215,7 @@ class SplayTree:
             return 1+max(self.height(root.left), self.height(root.right))
 
 
-def process(text, tree: SplayTree, fout):
+def process(text, tree: SplayTree):
     if len(text) == 0:
         return
 
@@ -309,7 +228,6 @@ def process(text, tree: SplayTree, fout):
             tree.root = tree.find(tree.root, key)
         else:
             tree.root = tree.find(tree.root, key)
-            fout.write('error\n')
             print('error')
         return
 
@@ -321,7 +239,6 @@ def process(text, tree: SplayTree, fout):
             value = text[pos1 + 5:]
             tree.root.value = value
         else:
-            fout.write('error\n')
             print('error')
         return
 
@@ -332,7 +249,6 @@ def process(text, tree: SplayTree, fout):
             tree.root = tree.remove(tree.root, key)
             tree.Peaks.remove(key)
         else:
-            fout.write('error\n')
             print('error')
         return
 
@@ -340,10 +256,8 @@ def process(text, tree: SplayTree, fout):
         key = int(text[7:])
         tree.root = tree.find(tree.root, key)
         if key in tree.Peaks:
-            fout.write('1 ' + tree.root.value + '\n')
             print('1', tree.root.value)
         else:
-            fout.write('0\n')
             print('0')
         return
 
@@ -351,10 +265,8 @@ def process(text, tree: SplayTree, fout):
         if len(tree.Peaks) is not 0:
             maximum = tree.max()
             tree.root = tree.find(tree.root, maximum)
-            fout.write(str(maximum) + ' ' + tree.root.value + '\n')
             print(maximum, tree.root.value)
         else:
-            fout.write('error\n')
             print('error')
         return
 
@@ -362,20 +274,17 @@ def process(text, tree: SplayTree, fout):
         if len(tree.Peaks) is not 0:
             minimum = tree.min()
             tree.root = tree.find(tree.root, minimum)
-            fout.write(str(minimum) + ' ' + tree.root.value+ '\n')
             print(minimum, tree.root.value)
         else:
-            fout.write('error\n')
             print('error')
         return
 
     if re.fullmatch(r'print', text) is not None:
         if len(tree.Peaks) == 0:
-            fout.write('_\n')
             print('_')
             return
         tree.h = tree.height(tree.root)
-        tree.print(fout)
+        tree.print()
         return
 
     print("error")
@@ -387,19 +296,13 @@ def main():
     sys.setrecursionlimit(10000)
 
     tree = SplayTree()
-    fin = open('MODUL2/tests2/input15.txt', "r")
-    fout = open('check.txt', 'w')
-    for text in fin:
-        t = text
-        process(text.strip(), tree, fout)
-    fin.close()
 
-    # while True:
-    #     try:
-    #         text = input()
-    #         process(text, tree, fout)
-    #     except EOFError:
-    #         break
+    while True:
+        try:
+            text = input()
+            process(text, tree)
+        except EOFError:
+            break
     return
 
 
