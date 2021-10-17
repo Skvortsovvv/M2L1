@@ -17,6 +17,7 @@ class SplayTree:
 
     root = None
     Peaks = []
+    h = 0
 
     def __init__(self):
         self.root = None
@@ -70,7 +71,7 @@ class SplayTree:
         # используем обход в ширину
         queue_to_visit = queue.Queue()
         if self.root is None:
-            print('_ _')
+            print('_')
             return
         else:
             print('[' + str(self.root.key) + ' ' + self.root.value + ']')
@@ -82,8 +83,8 @@ class SplayTree:
             indexes = queue.Queue()
             index = -3
             flag = False
+            high = 1
             while not queue_to_visit.empty():
-
                 if i == index+index:  # or i == index+index+1
                     flag = True
                     sys.stdout.write('_ _')
@@ -97,7 +98,8 @@ class SplayTree:
                         items_on_level *= 2
                         i = 0
                         sys.stdout.write('\n')
-                        if (indexes.qsize() * 2 + queue_to_visit.qsize() + 2) <= items_on_level:
+                        high += 1
+                        if high == self.h:
                             break
                     continue
 
@@ -116,10 +118,11 @@ class SplayTree:
                     items_on_level *= 2
                     i = 0
                     sys.stdout.write('\n')
+                    high += 1
+                    if high == self.h:
+                        break
                     if not indexes.empty() and not flag:
                         index = indexes.get()
-                    if (indexes.qsize()*2 + queue_to_visit.qsize()+2) < items_on_level:
-                        break
                 else:
                     sys.stdout.write(' ')
 
@@ -171,14 +174,16 @@ class SplayTree:
             return self.find(v.right, key)
         return self.splay(v)
 
+
     def merge(self, left, right):
         if right == None:
             return left
         if left == None:
             return right
-        right = self.find(right, left.key)
-        right.left, left.parent = left, right
-        return right
+        left = self.find(left, right.key)
+        left.right, right.parent = right, left
+        return left
+
 
     def remove(self, root, key):
         self.set_parent(root.left, None)
@@ -196,7 +201,7 @@ def process(text, tree: SplayTree):
     if len(text) == 0:
         return
 
-    if re.fullmatch(r"^add [\d+]+ [^\s+]+", text) is not None:
+    if re.fullmatch(r"^add [-]?[\d+]+ [^\s+]+", text) is not None:
         pos1 = text[4:].find(' ')
         key = int(text[4:pos1+4])
         if key not in tree.Peaks:
@@ -205,54 +210,64 @@ def process(text, tree: SplayTree):
             tree.root = tree.find(tree.root, key)
         else:
             tree.root = tree.find(tree.root, key)
+            print('error')
         return
 
-    if tree.root is not None:
-        if re.fullmatch(r"set [\d+]+ [^\s+]+", text) is not None:
-            pos1 = text[4:].find(' ')
-            key = int(text[4:pos1+4])
-            if key in tree.Peaks:
-                value = text[pos1 + 5:]
-                tree.root = tree.find(tree.root, key)
-                tree.root.value = value
-            else:
-                tree.root = tree.find(tree.root, key)
-            return
+    if re.fullmatch(r"set [-]?[\d+]+ [^\s+]+", text) is not None:
+        pos1 = text[4:].find(' ')
+        key = int(text[4:pos1+4])
+        tree.root = tree.find(tree.root, key)
+        if key in tree.Peaks:
+            value = text[pos1 + 5:]
+            tree.root.value = value
+        else:
+            print('error')
+        return
 
-        if re.fullmatch(r'delete [\d+]+', text) is not None:
-            key = int(text[7:])
-            if key in tree.Peaks:
-                tree.root = tree.find(tree.root, key)
-                tree.root = tree.remove(tree.root, key)
-            else:
-                tree.root = tree.find(tree.root, key)
-            return
+    if re.fullmatch(r'delete [-]?[\d+]+', text) is not None:
+        key = int(text[7:])
+        tree.root = tree.find(tree.root, key)
+        if key in tree.Peaks:
+            tree.root = tree.remove(tree.root, key)
+            tree.Peaks.remove(key)
+        else:
+            print('error')
+        return
 
-        if re.fullmatch(r'search [\d+]+', text) is not None:
-            key = int(text[7:])
-            tree.root = tree.find(tree.root, key)
-            if tree.root.key == key:
-                print('1', tree.root.value)
-            else:
-                print('0')
-            return
+    if re.fullmatch(r'search [-]?[\d+]+', text) is not None:
+        key = int(text[7:])
+        tree.root = tree.find(tree.root, key)
+        if key in tree.Peaks:
+            print('1', tree.root.value)
+        else:
+            print('0')
+        return
 
-        if re.fullmatch(r'max', text) is not None:
+    if re.fullmatch(r'max', text) is not None:
+        if len(tree.Peaks) is not 0:
             maximum = tree.max()
             tree.root = tree.find(tree.root, maximum)
-            print(maximum)
-            return
+            print(maximum, tree.root.value)
+        else:
+            print('error')
+        return
 
-        if re.fullmatch(r'min', text) is not None:
+    if re.fullmatch(r'min', text) is not None:
+        if len(tree.Peaks) is not 0:
             minimum = tree.min()
             tree.root = tree.find(tree.root, minimum)
-            print(minimum)
-            return
+            print(minimum, tree.root.value)
+        else:
+            print('error')
+        return
 
-        if re.fullmatch(r'print', text) is not None:
-            #print(tree.height(tree.root))
-            tree.print()
+    if re.fullmatch(r'print', text) is not None:
+        if len(tree.Peaks) == 0:
+            print('_')
             return
+        tree.h = tree.height(tree.root)
+        tree.print()
+        return
 
     print("error")
 
@@ -261,12 +276,13 @@ def process(text, tree: SplayTree):
 def main():
 
     tree = SplayTree()
-    inputfile = open('MODUL2/tests2/input1.txt', 'r')
+    # fin = open('MODUL2/tests2/input12.txt', "r")
+    #
+    # for text in fin:
+    #     t = text
+    #     process(text.strip(), tree)
+    # fin.close()
 
-
-    # for text in inputfile:
-    #     sys.stdout.write(text)
-    #     process(text, tree)
     while True:
         try:
             text = input()
