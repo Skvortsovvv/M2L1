@@ -45,14 +45,54 @@ class Heap:
         print(self.peaks[0][0], 0, self.peaks[0][1])
 
     def max(self):
-        pass
+        a = 0
+        size1 = size2 = len(self.peaks)
+        while size1 > 1:
+            size1 = int(size1/2)
+            a += 1
+        index = pow(2, a)
+        index -= 1
+        maximum = None
+        for i in range(index, size2):
+            if maximum is None:
+                maximum = i
+            elif self.peaks[i][0] > self.peaks[maximum][0]:
+                maximum = i
+        print(self.peaks[maximum][0], maximum, self.peaks[maximum][1])
+
+    def extract(self):
+        print(self.peaks[0][0], self.peaks[0][1])
+        self.peaks[0] = self.peaks[len(self.peaks)-1]
+        self.heapify(0)
+
+    def delete(self, index):
+        self.peaks[index] = self.peaks[len(self.peaks)-1]
+        self.heapify(index)
+
+    def print(self):
+        counter = 2
+        if len(self.peaks) == 0:
+            print('_')
+            return
+        for i in range(0, len(self.peaks)):
+            if i == 0:
+                print('[' + self.peaks[i][0] + ' ' + self.peaks[i][1] + ']')
+            else:
+                if i % 2 == 0:
+                    sys.stdout.write('[' + self.peaks[i][0] + ' '
+                                     + self.peaks[i][1] + ' ' + self.peaks[int(i/2)][0] + ']')
+                else:
+                    sys.stdout.write('[' + self.peaks[i][0] + ' '
+                                     + self.peaks[i][1] + ' ' + self.peaks[int(i-1/2)][0] + ']')
+                if i is not counter:
+                    sys.stdout.write(' ')
+                else:
+                    sys.stdout.write('\n')
+                    counter *= 2
+
 
 
 if __name__ == '__main__':
-
-    m = []
-    m.append((1, 'qwe'))
-    print(m[0][1])
 
     pass
 
