@@ -1,5 +1,5 @@
 import sys
-
+import re
 
 class Heap:
 
@@ -62,7 +62,9 @@ class Heap:
 
     def extract(self):
         print(self.peaks[0][0], self.peaks[0][1])
-        self.peaks[0] = self.peaks[len(self.peaks)-1]
+        index = len(self.peaks)-1
+        self.peaks[0] = self.peaks[index]
+        del self.peaks[index:index+1]
         self.heapify(0)
 
     def delete(self, index):
@@ -89,10 +91,41 @@ class Heap:
                 else:
                     sys.stdout.write('\n')
                     counter *= 2
+        a = 0
+        size1 = size2 = len(self.peaks)
+        while size1 > 1:
+            size1 = int(size1 / 2)
+            a += 1
+        a += 1
+        power = pow(2, a)
+        amount = size2 - power
+        sys.stdout.write('_ ' * amount)
+        sys.stdout.write('_\n')
+
+
+
+def process(heap: Heap, command):
+    if command == ' ':
+        return
+    if re.fullmatch(r'add [-]?[\d+]+ [^\s+]+', command):
+        pos1 = text[4:].find(' ')
+        key = int(text[4:pos1 + 4])
+        index = heap.find(key)
+        if index is not None:
+            value = command[pos1+5:]
+            heap.add(key, value)
+        else:
+            print('error')
 
 
 
 if __name__ == '__main__':
+
+    min_heap = Heap()
+
+    while True:
+        text = input()
+        process(min_heap, text)
 
     pass
 
