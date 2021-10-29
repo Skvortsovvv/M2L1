@@ -1,15 +1,16 @@
 import sys
 import re
 
+
 class Heap:
 
     def __init__(self):
-        self.peaks = []
-        self.keys = {} # мапа из ключей и индексов для получения за константу
+        self.peaks = []  # лист из (ключ, значение)
+        self.keys = {}  # мапа из ключей и индексов для получения за константу
 
     def heapify(self, index):
-        left = 2*index
-        right = 2*index + 1
+        left = 2*index + 1
+        right = 2*index + 2
         minimum = index
         if (left < len(self.peaks)) and (self.peaks[left][0] < self.peaks[minimum][0]):
             minimum = left
@@ -30,15 +31,38 @@ class Heap:
         return None
 
     def set(self, key, value):
-        self.peaks[key][1] = value
+        index = self.keys.get(key)
+        self.peaks[index][key] = value
+
+    def parent_index(self, child_index):
+        if child_index == 0:
+            return None
+        if child_index % 2 == 0:
+            # левый
+            return (child_index - 2) // 2
+        else:
+            # правый
+            return (child_index - 1) // 2
 
     def add(self, key, value):
         self.peaks.append((key, value))
-        index = len(self.peaks) - 1
-        self.keys[key] = index
-        while (index > 0) and (self.peaks[int(index/2)][0] > self.peaks[index][0]):
-            self.peaks[index], self.peaks[int(index/2)] = self.peaks[int(index/2)], self.peaks[index]
-            index = int(index/2)
+        i = len(self.peaks) - 1
+        self.keys[key] = i
+        while (i > 0) and (self.peaks[self.parent_index(i)][0] > key):
+            p = self.parent_index(i)
+            self.peaks[p], self.peaks[i] = self.peaks[i], self.peaks[p]
+            self.keys[self.peaks[p][0]], self.keys[self.peaks[i][0]] = self.keys[self.peaks[i][0]], \
+                                                                       self.keys[self.peaks[p][0]]
+            i = self.parent_index(i)
+        # self.keys[self.peaks[i][0]] = i
+
+    # def add(self, key, value):
+    #     self.peaks.append((key, value))
+    #     index = len(self.peaks) - 1  # индекс добавленного элемента
+    #     self.keys[key] = index
+    #     while (index > 0) and (self.peaks[int(index/2)][0] > self.peaks[index][0]):
+    #         self.peaks[index], self.peaks[int(index/2)] = self.peaks[int(index/2)], self.peaks[index]
+    #         index = int(index/2)
 
     def min(self):
         print(self.peaks[0][0], 0, self.peaks[0][1])
@@ -66,7 +90,6 @@ class Heap:
             del self.peaks[index:index+1]
             del self.keys[key]
             self.heapify(index)
-
 
     def print(self):
         if len(self.peaks) == 0:
@@ -164,6 +187,9 @@ def process(heap: Heap, command):
 if __name__ == '__main__':
 
     min_heap = Heap()
+    min_heap.add(5, 'w')
+    min_heap.add(3, 'w')
+    min_heap.add(2, 'w')
 
     while True:
         try:
