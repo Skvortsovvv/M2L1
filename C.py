@@ -61,7 +61,11 @@ class Heap:
         print(self.peaks[0][0], 0, self.peaks[0][1])
 
     def max(self):
-        index_max = max(self.keys, key=self.keys.get)
+        # index_max = max(self.keys, key=self.keys.get)
+        index_max = 0
+        for i in range(0, len(self.peaks)):
+            if self.peaks[i][0] > self.peaks[index_max][0]:
+                index_max = i
         print(self.peaks[index_max][0], index_max, self.peaks[index_max][1])
 
     def extract(self):
@@ -90,30 +94,35 @@ class Heap:
             print('_')
             return
         counter = 2
+        counter_lvl = 1
         for i in range(0, len(self.peaks)):
             if i == 0:
                 print('[' + str(self.peaks[i][0]) + ' ' + self.peaks[i][1] + ']')
             else:
                 if i % 2 != 0:
                     sys.stdout.write('[' + str(self.peaks[i][0]) + ' '
-                                     + self.peaks[i][1] + ' ' + str(self.peaks[int(i-1/2)][0]) + ']')
+                                     + self.peaks[i][1] + ' ' + str(self.peaks[(i-1)//2][0]) + ']')
                 else:
                     sys.stdout.write('[' + str(self.peaks[i][0]) + ' '
-                                     + self.peaks[i][1] + ' ' + str(self.peaks[int(i-2/2)][0]) + ']')
-                if i is not counter:
+                                     + self.peaks[i][1] + ' ' + str(self.peaks[(i-2)//2][0]) + ']')
+                if counter_lvl is not counter:
                     sys.stdout.write(' ')
+                    counter_lvl += 1
                 else:
                     sys.stdout.write('\n')
+                    counter_lvl = 1
                     counter *= 2
+
         a = 1  # степень двойки
         size1 = size2 = len(self.peaks)
         while size1 > 1:
             size1 = int(size1 / 2)
             a += 1
-        power = pow(2, a)
-        amount = power - size2 - 2
-        sys.stdout.write('_ ' * amount)
-        sys.stdout.write('_\n')
+        power = pow(2, a) - 1
+        if power != size2:
+            amount = power - size2
+            sys.stdout.write('_ ' * (amount - 1))
+            sys.stdout.write('_\n')
 
 
 def process(heap: Heap, command):
