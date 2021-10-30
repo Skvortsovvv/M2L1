@@ -69,7 +69,6 @@ class Heap:
         print(self.peaks[index_max][0], index_max, self.peaks[index_max][1])
 
     def extract(self):
-        print(self.peaks[0][0], self.peaks[0][1])
         index = len(self.peaks)-1
         key = self.peaks[0][0]
         self.peaks[0] = self.peaks[index]
@@ -80,11 +79,12 @@ class Heap:
     def delete(self, key):
         last = len(self.peaks) - 1
         if key == self.peaks[last][0]:
-            index = len(self.peaks) - 1
-            del self.peaks[index:index+1]
+            del self.peaks[last:last+1]
         else:
             index = self.keys[key]
             self.peaks[index], self.peaks[last] = self.peaks[last], self.peaks[index]
+            self.keys[self.peaks[index][0]], self.keys[self.peaks[last][0]] \
+                = self.keys[self.peaks[last][0]], self.keys[self.peaks[index][0]]
             del self.peaks[last:last+1]
             del self.keys[key]
             self.heapify(index)
@@ -149,11 +149,12 @@ def process(heap: Heap, command):
             print('error')
         return
     if re.fullmatch(r'delete [-]?[\d+]+', text) is not None:
-        key = int(text[7:])
-        if heap.find(key) is not None:
-            heap.delete(key)
-        else:
-            print('error')
+        if len(heap.keys) != 0:
+            key = int(text[7:])
+            if heap.find(key) is not None:
+                heap.delete(key)
+            else:
+                print('error')
         return
     if re.fullmatch(r'search [-]?[\d+]+', text) is not None:
         key = int(text[7:])
