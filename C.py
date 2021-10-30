@@ -18,6 +18,8 @@ class Heap:
             minimum = right
         if minimum is not index:
             self.peaks[index], self.peaks[minimum] = self.peaks[minimum], self.peaks[index]
+            self.keys[self.peaks[index][0]], self.keys[self.peaks[minimum][0]] \
+                = self.keys[self.peaks[minimum][0]], self.keys[self.peaks[index][0]]
             self.heapify(minimum)
 
     def make_heap(self):
@@ -32,7 +34,7 @@ class Heap:
 
     def set(self, key, value):
         index = self.keys.get(key)
-        self.peaks[index][key] = value
+        self.peaks[index][1] = value
 
     def parent_index(self, child_index):
         if child_index == 0:
@@ -45,24 +47,15 @@ class Heap:
             return (child_index - 1) // 2
 
     def add(self, key, value):
-        self.peaks.append((key, value))
+        self.peaks.append([key, value])
         i = len(self.peaks) - 1
         self.keys[key] = i
         while (i > 0) and (self.peaks[self.parent_index(i)][0] > key):
             p = self.parent_index(i)
             self.peaks[p], self.peaks[i] = self.peaks[i], self.peaks[p]
-            self.keys[self.peaks[p][0]], self.keys[self.peaks[i][0]] = self.keys[self.peaks[i][0]], \
-                                                                       self.keys[self.peaks[p][0]]
+            self.keys[self.peaks[p][0]], self.keys[self.peaks[i][0]] \
+                = self.keys[self.peaks[i][0]], self.keys[self.peaks[p][0]]
             i = self.parent_index(i)
-        # self.keys[self.peaks[i][0]] = i
-
-    # def add(self, key, value):
-    #     self.peaks.append((key, value))
-    #     index = len(self.peaks) - 1  # индекс добавленного элемента
-    #     self.keys[key] = index
-    #     while (index > 0) and (self.peaks[int(index/2)][0] > self.peaks[index][0]):
-    #         self.peaks[index], self.peaks[int(index/2)] = self.peaks[int(index/2)], self.peaks[index]
-    #         index = int(index/2)
 
     def min(self):
         print(self.peaks[0][0], 0, self.peaks[0][1])
@@ -81,13 +74,14 @@ class Heap:
         self.heapify(0)
 
     def delete(self, key):
-        if key == self.peaks[len(self.peaks)-1][0]:
+        last = len(self.peaks) - 1
+        if key == self.peaks[last][0]:
             index = len(self.peaks) - 1
             del self.peaks[index:index+1]
         else:
-            index = self.keys[key][1]
-            self.peaks[0] = self.peaks[index]
-            del self.peaks[index:index+1]
+            index = self.keys[key]
+            self.peaks[index], self.peaks[last] = self.peaks[last], self.peaks[index]
+            del self.peaks[last:last+1]
             del self.keys[key]
             self.heapify(index)
 
@@ -100,25 +94,24 @@ class Heap:
             if i == 0:
                 print('[' + str(self.peaks[i][0]) + ' ' + self.peaks[i][1] + ']')
             else:
-                if i % 2 == 0:
-                    sys.stdout.write('[' + str(self.peaks[i][0]) + ' '
-                                     + self.peaks[i][1] + ' ' + str(self.peaks[int(i/2)][0]) + ']')
-                else:
+                if i % 2 != 0:
                     sys.stdout.write('[' + str(self.peaks[i][0]) + ' '
                                      + self.peaks[i][1] + ' ' + str(self.peaks[int(i-1/2)][0]) + ']')
+                else:
+                    sys.stdout.write('[' + str(self.peaks[i][0]) + ' '
+                                     + self.peaks[i][1] + ' ' + str(self.peaks[int(i-2/2)][0]) + ']')
                 if i is not counter:
                     sys.stdout.write(' ')
                 else:
                     sys.stdout.write('\n')
                     counter *= 2
-        a = 0
+        a = 1  # степень двойки
         size1 = size2 = len(self.peaks)
         while size1 > 1:
             size1 = int(size1 / 2)
             a += 1
-        a += 1
         power = pow(2, a)
-        amount = size2 - power
+        amount = power - size2 - 2
         sys.stdout.write('_ ' * amount)
         sys.stdout.write('_\n')
 
@@ -187,9 +180,6 @@ def process(heap: Heap, command):
 if __name__ == '__main__':
 
     min_heap = Heap()
-    min_heap.add(5, 'w')
-    min_heap.add(3, 'w')
-    min_heap.add(2, 'w')
 
     while True:
         try:
