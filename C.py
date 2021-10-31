@@ -89,7 +89,27 @@ class Heap:
                 = self.keys[self.peaks[last][0]], self.keys[self.peaks[index][0]]
             del self.peaks[last:last+1]
             del self.keys[key]
-            self.heapify(index)
+
+            key_last = self.peaks[index][0]  # ключ перемещаемого вверх элемента
+
+            if index == 0 or self.peaks[self.parent_index(index)][0] < self.peaks[index][0]:
+                self.heapify(index)
+            else:
+                while self.parent_index(index) is not None:
+                    if self.peaks[self.parent_index(index)][0] > self.peaks[index][0]:
+                        parent = self.parent_index(index)  # индекс родителя
+                        self.peaks[parent], self.peaks[index] = \
+                            self.peaks[index], self.peaks[parent]  # меняем местами родителя и перемещаемый эелемент
+                        parent = index  # обновляем индекс родителя
+                        self.keys[key_last], self.keys[self.peaks[parent][0]] = \
+                            self.keys[self.peaks[parent][0]], self.keys[key_last]  # меняем местами их индексы
+
+                        index = self.keys[key_last]  # обновляем индекс перемещенного вверх элеента
+                        self.heapify(parent)  # возобновляем св-во кучи относительно перемещенного родителя
+                    else:
+                        break
+
+
 
     def print(self):
         if len(self.peaks) == 0:
@@ -157,6 +177,8 @@ def process(heap: Heap, command):
                 heap.delete(key)
             else:
                 print('error')
+        else:
+            print('error')
         return
     if re.fullmatch(r'search [-]?[\d+]+', text) is not None:
         key = int(text[7:])
