@@ -1,12 +1,12 @@
 import sys
 import re
-
+import time
 
 class Heap:
 
     def __init__(self):
-        self.peaks = []  # лист из (ключ, значение)
-        self.keys = {}  # мапа из ключей и индексов для получения за константу
+        self.peaks = []  # list из [ключ, значение]
+        self.keys = {}  # map из ключей и индексов
 
     def heapify(self, index):
         left = 2*index + 1
@@ -27,10 +27,17 @@ class Heap:
             self.heapify(i)
 
     def find(self, key):
-        for i in range(0, len(self.peaks)):
-            if self.peaks[i][0] == key:
-                return i
-        return None
+
+        index = None
+        try:
+            index = self.keys[key]
+        except KeyError:
+            pass
+        return index
+        # for i in range(0, len(self.peaks)):
+        #     if self.peaks[i][0] == key:
+        #         return i
+        # return None
 
     def set(self, key, value):
         index = self.keys.get(key)
@@ -61,7 +68,6 @@ class Heap:
         print(self.peaks[0][0], 0, self.peaks[0][1])
 
     def max(self):
-        # index_max = max(self.keys, key=self.keys.get)
         index_max = 0
         for i in range(0, len(self.peaks)):
             if self.peaks[i][0] > self.peaks[index_max][0]:
@@ -212,7 +218,6 @@ def process(heap: Heap, command):
 
 
 if __name__ == '__main__':
-
     min_heap = Heap()
 
     while True:
@@ -221,3 +226,4 @@ if __name__ == '__main__':
             process(min_heap, text)
         except EOFError:
             break
+
