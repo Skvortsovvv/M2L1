@@ -71,6 +71,7 @@ class Heap:
     def extract(self):
         index = len(self.peaks)-1
         key = self.peaks[0][0]
+        print(self.peaks[0][0], self.peaks[0][1])
         self.peaks[0] = self.peaks[index]
         del self.peaks[index:index+1]
         del self.keys[key]
@@ -80,6 +81,7 @@ class Heap:
         last = len(self.peaks) - 1
         if key == self.peaks[last][0]:
             del self.peaks[last:last+1]
+            del self.keys[key]
         else:
             index = self.keys[key]
             self.peaks[index], self.peaks[last] = self.peaks[last], self.peaks[index]
