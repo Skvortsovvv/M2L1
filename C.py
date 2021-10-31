@@ -127,7 +127,7 @@ class Heap:
                 else:
                     sys.stdout.write('[' + str(self.peaks[i][0]) + ' '
                                      + self.peaks[i][1] + ' ' + str(self.peaks[(i-2)//2][0]) + ']')
-                if counter_lvl is not counter:
+                if counter_lvl != counter:
                     sys.stdout.write(' ')
                     counter_lvl += 1
                 else:
