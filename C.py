@@ -115,29 +115,28 @@ class Heap:
                     else:
                         break
 
+    def print(self, out=sys.stdout):
 
-
-    def print(self):
         if len(self.peaks) == 0:
-            print('_')
+            print('_', file=out)
             return
         counter = 2
         counter_lvl = 1
         for i in range(0, len(self.peaks)):
             if i == 0:
-                print('[' + str(self.peaks[i][0]) + ' ' + self.peaks[i][1] + ']')
+                print('[' + str(self.peaks[i][0]) + ' ' + self.peaks[i][1] + ']', file=out)
             else:
                 if i % 2 != 0:
-                    sys.stdout.write('[' + str(self.peaks[i][0]) + ' '
+                    out.write('[' + str(self.peaks[i][0]) + ' '
                                      + self.peaks[i][1] + ' ' + str(self.peaks[(i-1)//2][0]) + ']')
                 else:
-                    sys.stdout.write('[' + str(self.peaks[i][0]) + ' '
+                    out.write('[' + str(self.peaks[i][0]) + ' '
                                      + self.peaks[i][1] + ' ' + str(self.peaks[(i-2)//2][0]) + ']')
                 if counter_lvl != counter:
-                    sys.stdout.write(' ')
+                    out.write(' ')
                     counter_lvl += 1
                 else:
-                    sys.stdout.write('\n')
+                    out.write('\n')
                     counter_lvl = 1
                     counter *= 2
 
@@ -149,8 +148,8 @@ class Heap:
         power = pow(2, a) - 1
         if power != size2:
             amount = power - size2
-            sys.stdout.write('_ ' * (amount - 1))
-            sys.stdout.write('_\n')
+            out.write('_ ' * (amount - 1))
+            out.write('_\n')
 
 
 def process(heap: Heap, command):
