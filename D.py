@@ -40,7 +40,7 @@ class Tree:
         length = len(results)
 
         if length == 0:
-            print(word, '-> ?')
+            print(word, '-?')
         elif length == 1:
             if results[0][1] == 0:
                 print(word, '- ok')
@@ -48,14 +48,15 @@ class Tree:
                 print(word, '->', results[0][0])
         else:
             sys.stdout.write(word + ' -> ')
-            for i in range(length-1, -1, -1):
+            results.sort()
+            for i in range(0, length):
                 sys.stdout.write(results[i][0])
-                if i != 0:
+                if i != length-1:
                     sys.stdout.write(', ')
                 else:
                     sys.stdout.write('\n')
 
-    def searchRecursive(self, node: Node, word, previousrow, results, maxcost):
+    def searchRecursive(self, node: Node, word, previousrow, results, maxcost, prev_letter=None, prevprev_row=None):
 
         columns = len(word) + 1
         currentrow = [previousrow[0] + 1]
@@ -69,14 +70,26 @@ class Tree:
             else:
                 replacecost = previousrow[column - 1]
 
-            currentrow.append(min(insertcost, deletecost, replacecost))
+            if (column > 1) and (prev_letter is not None):
+                if (word[column-1] == prev_letter) and (word[column-2] == node.value):
+                    swapcost = min(prevprev_row[column - 2] + 1, previousrow[column - 1])
+                    currentrow.append(min(insertcost, deletecost, replacecost, swapcost))
+
+                else:
+                    currentrow.append(min(insertcost, deletecost, replacecost))
+            else:
+                currentrow.append(min(insertcost, deletecost, replacecost))
 
         if currentrow[-1] <= maxcost and node.word != '':
+            if node.word == word:
+                results.clear()
+                results.append((node.word, 0))
+                return
             results.append((node.word, currentrow[-1]))
 
         if min(currentrow) <= maxcost:
             for son in node.sons:
-                self.searchRecursive(son, word, currentrow, results, maxcost)
+                self.searchRecursive(son, word, currentrow, results, maxcost, node.value, previousrow)
 
 
 if __name__ == "__main__":
@@ -101,12 +114,3 @@ if __name__ == "__main__":
         except EOFError:
             break
     pass
-
-    # while True:
-    #     try:
-    #         input_word = input()
-    #         pass
-    #     except EOFError:
-    #         break
-    #
-    # pass
