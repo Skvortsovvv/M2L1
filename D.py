@@ -32,6 +32,8 @@ class Tree:
         return None
 
     def search(self, word, maxcost=1):
+        word_old = word
+        word = word.lower()
         currentrow = range(len(word) + 1)
         results = []
         for son in self.root.sons:
@@ -40,14 +42,17 @@ class Tree:
         length = len(results)
 
         if length == 0:
-            print(word, '-?')
+            print(word_old, '-?')
         elif length == 1:
             if results[0][1] == 0:
-                print(word, '- ok')
+                print(word_old, '- ok')
             else:
-                print(word, '->', results[0][0])
+                print(word_old, '->', results[0][0])
         else:
-            sys.stdout.write(word + ' -> ')
+            if (word, 0) in results:
+                print(word_old, '- ok')
+                return
+            sys.stdout.write(word_old + ' -> ')
             results.sort()
             for i in range(0, length):
                 sys.stdout.write(results[i][0])
@@ -81,10 +86,6 @@ class Tree:
                 currentrow.append(min(insertcost, deletecost, replacecost))
 
         if currentrow[-1] <= maxcost and node.word != '':
-            if node.word == word:
-                results.clear()
-                results.append((node.word, 0))
-                return
             results.append((node.word, currentrow[-1]))
 
         if min(currentrow) <= maxcost:
@@ -109,7 +110,6 @@ if __name__ == "__main__":
         try:
             input_word = input()
             if input_word != '':
-                input_word = input_word.lower()
                 pref_tree.search(input_word)
         except EOFError:
             break
