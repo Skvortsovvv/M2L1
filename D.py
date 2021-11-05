@@ -99,6 +99,8 @@ if __name__ == "__main__":
     Number = int(input())
     counter = 0
     while True:
+        if Number == 0:
+            break
         input_word = input()
         if input_word != '':
             input_word = input_word.lower()
