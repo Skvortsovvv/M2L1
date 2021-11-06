@@ -1,6 +1,6 @@
 import sys
 import re
-import time
+import math
 
 class Heap:
 
@@ -34,10 +34,6 @@ class Heap:
         except KeyError:
             pass
         return index
-        # for i in range(0, len(self.peaks)):
-        #     if self.peaks[i][0] == key:
-        #         return i
-        # return None
 
     def set(self, key, value):
         index = self.keys.get(key)
@@ -65,23 +61,34 @@ class Heap:
             i = self.parent_index(i)
 
     def min(self):
-        print(self.peaks[0][0], 0, self.peaks[0][1])
+        return self.peaks[0]
 
     def max(self):
         index_max = 0
-        for i in range(0, len(self.peaks)):
+        length1 = length2 = len(self.peaks)
+        a = 0
+        while length1 > 1:
+            length1 = int(length1 / 2)
+            a += 1
+        power = pow(2, a) - 1
+        amount1 = length2 - power  # число листов на последнем уровне
+        b = math.ceil(amount1/2)  # число предков листов последнего уровня
+        amount2 = pow(2, a-1) - b  # число листов на предпоследнем уровне
+        for i in range(length2 - amount1 - amount2, length2):
             if self.peaks[i][0] > self.peaks[index_max][0]:
                 index_max = i
-        print(self.peaks[index_max][0], index_max, self.peaks[index_max][1])
+        return index_max
 
     def extract(self):
+        top = self.peaks[0]
         index = len(self.peaks)-1
         key = self.peaks[0][0]
-        print(self.peaks[0][0], self.peaks[0][1])
         self.peaks[0] = self.peaks[index]
         del self.peaks[index:index+1]
         del self.keys[key]
         self.heapify(0)
+        return top
+
 
     def delete(self, key):
         last = len(self.peaks) - 1
@@ -156,8 +163,8 @@ def process(heap: Heap, command):
     if command == ' ':
         return
     if re.fullmatch(r'add [-]?[\d+]+ [^\s+]+', command) is not None:
-        pos1 = text[4:].find(' ')
-        key = int(text[4:pos1 + 4])
+        pos1 = command[4:].find(' ')
+        key = int(command[4:pos1 + 4])
         index = heap.find(key)
         if index is None:
             value = command[pos1+5:]
@@ -165,19 +172,19 @@ def process(heap: Heap, command):
         else:
             print('error')
         return
-    if re.fullmatch(r"set [-]?[\d+]+ [^\s+]+", text) is not None:
-        pos1 = text[4:].find(' ')
-        key = int(text[4:pos1 + 4])
+    if re.fullmatch(r"set [-]?[\d+]+ [^\s+]+", command) is not None:
+        pos1 = command[4:].find(' ')
+        key = int(command[4:pos1 + 4])
         index = heap.find(key)
         if index is not None:
-            value = text[pos1 + 5:]
+            value = command[pos1 + 5:]
             heap.set(key, value)
         else:
             print('error')
         return
-    if re.fullmatch(r'delete [-]?[\d+]+', text) is not None:
+    if re.fullmatch(r'delete [-]?[\d+]+', command) is not None:
         if len(heap.keys) != 0:
-            key = int(text[7:])
+            key = int(command[7:])
             if heap.find(key) is not None:
                 heap.delete(key)
             else:
@@ -185,33 +192,36 @@ def process(heap: Heap, command):
         else:
             print('error')
         return
-    if re.fullmatch(r'search [-]?[\d+]+', text) is not None:
-        key = int(text[7:])
+    if re.fullmatch(r'search [-]?[\d+]+', command) is not None:
+        key = int(command[7:])
         index = heap.find(key)
         if index is not None:
             print(1, index, heap.peaks[index][1])
         else:
             print(0)
         return
-    if re.fullmatch(r'min', text) is not None:
+    if re.fullmatch(r'min', command) is not None:
         if len(heap.keys) != 0:
-            heap.min()
+            minimum = heap.min()
+            print(minimum[0], 0, minimum[1])
         else:
             print('error')
         return
-    if re.fullmatch(r'max', text) is not None:
+    if re.fullmatch(r'max', command) is not None:
         if len(heap.keys) != 0:
-            heap.max()
+            index = heap.max()
+            print(heap.peaks[index][0], index, heap.peaks[index][1])
         else:
             print('error')
         return
-    if re.fullmatch(r'extract', text) is not None:
+    if re.fullmatch(r'extract', command) is not None:
         if len(heap.keys) != 0:
-            heap.extract()
+            top = heap.extract()
+            print(top[0], top[1])
         else:
             print('error')
         return
-    if re.fullmatch(r'print', text) is not None:
+    if re.fullmatch(r'print', command) is not None:
         heap.print()
         return
 
