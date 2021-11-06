@@ -71,10 +71,10 @@ class SplayTree:
 
         queue_to_visit = queue.Queue()  # items
         if self.root is None:
-            print('_', file=out)
+            out.write('_\n')
             return
         else:
-            print('[' + str(self.root.key) + ' ' + self.root.value + ']', file=out)
+            out.write('[' + str(self.root.key) + ' ' + self.root.value + ']\n')
         if self.root.left is not self.root.right:
             queue_to_visit.put(self.root.left)
             queue_to_visit.put(self.root.right)

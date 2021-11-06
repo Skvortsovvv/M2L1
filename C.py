@@ -17,9 +17,10 @@ class Heap:
         if (right < len(self.peaks)) and (self.peaks[right][0] < self.peaks[minimum][0]):
             minimum = right
         if minimum is not index:
-            self.peaks[index], self.peaks[minimum] = self.peaks[minimum], self.peaks[index]
-            self.keys[self.peaks[index][0]], self.keys[self.peaks[minimum][0]] \
-                = self.keys[self.peaks[minimum][0]], self.keys[self.peaks[index][0]]
+
+            self.swap_peaks(index, minimum)
+            self.swap_indexes(self.peaks[index][0], self.peaks[minimum][0])
+
             self.heapify(minimum)
 
     def make_heap(self):
@@ -55,9 +56,10 @@ class Heap:
         self.keys[key] = i
         while (i > 0) and (self.peaks[self.parent_index(i)][0] > key):
             p = self.parent_index(i)
-            self.peaks[p], self.peaks[i] = self.peaks[i], self.peaks[p]
-            self.keys[self.peaks[p][0]], self.keys[self.peaks[i][0]] \
-                = self.keys[self.peaks[i][0]], self.keys[self.peaks[p][0]]
+
+            self.swap_peaks(p, i)
+            self.swap_indexes(self.peaks[p][0], self.peaks[i][0])
+
             i = self.parent_index(i)
 
     def min(self):
@@ -77,7 +79,7 @@ class Heap:
         for i in range(length2 - amount1 - amount2, length2):
             if self.peaks[i][0] > self.peaks[index_max][0]:
                 index_max = i
-        return index_max
+        return self.peaks[index_max]
 
     def extract(self):
         top = self.peaks[0]
@@ -89,6 +91,11 @@ class Heap:
         self.heapify(0)
         return top
 
+    def swap_peaks(self, child, parent):
+        self.peaks[parent], self.peaks[child] = self.peaks[child], self.peaks[parent]
+
+    def swap_indexes(self, key1, key2):
+        self.keys[key1], self.keys[key2] = self.keys[key2], self.keys[key1]
 
     def delete(self, key):
         last = len(self.peaks) - 1
@@ -97,9 +104,10 @@ class Heap:
             del self.keys[key]
         else:
             index = self.keys[key]
-            self.peaks[index], self.peaks[last] = self.peaks[last], self.peaks[index]
-            self.keys[self.peaks[index][0]], self.keys[self.peaks[last][0]] \
-                = self.keys[self.peaks[last][0]], self.keys[self.peaks[index][0]]
+
+            self.swap_peaks(index, last)
+            self.swap_indexes(self.peaks[index][0], self.peaks[last][0])
+
             del self.peaks[last:last+1]
             del self.keys[key]
 
@@ -111,11 +119,10 @@ class Heap:
                 while self.parent_index(index) is not None:
                     if self.peaks[self.parent_index(index)][0] > self.peaks[index][0]:
                         parent = self.parent_index(index)  # индекс родителя
-                        self.peaks[parent], self.peaks[index] = \
-                            self.peaks[index], self.peaks[parent]  # меняем местами родителя и перемещаемый эелемент
+
+                        self.swap_peaks(index, parent)
                         parent = index  # обновляем индекс родителя
-                        self.keys[key_last], self.keys[self.peaks[parent][0]] = \
-                            self.keys[self.peaks[parent][0]], self.keys[key_last]  # меняем местами их индексы
+                        self.swap_indexes(key_last, self.peaks[parent][0])
 
                         index = self.keys[key_last]  # обновляем индекс перемещенного вверх элеента
                         self.heapify(parent)  # возобновляем св-во кучи относительно перемещенного родителя
@@ -209,8 +216,8 @@ def process(heap: Heap, command):
         return
     if re.fullmatch(r'max', command) is not None:
         if len(heap.keys) != 0:
-            index = heap.max()
-            print(heap.peaks[index][0], index, heap.peaks[index][1])
+            maximum = heap.max()
+            print(maximum[0], heap.keys[maximum[0]], maximum[1])
         else:
             print('error')
         return
